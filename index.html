@@ -2,52 +2,103 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAYR Options - Professional Trading</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RAYR Options - Professional Trading System</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #0a0e27;
-            color: #fff;
-            padding: 16px;
-            font-size: 14px;
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
         }
         
-        .container { max-width: 1200px; margin: 0 auto; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #fff;
+            padding: 12px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
         
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+        }
+        
+        /* Header */
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
         }
         
-        .header h1 { font-size: 24px; }
-        .header .live { 
+        .header h1 { 
+            font-size: 20px; 
+            font-weight: 700;
+        }
+        
+        .live-badge { 
             background: #10b981;
             padding: 6px 12px;
             border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
+            font-size: 11px;
+            font-weight: 700;
+            animation: pulse 2s infinite;
         }
         
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Health Score */
+        .health-section {
+            background: #1a1f3a;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .health-score {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 8px 0;
+        }
+        
+        .health-score.green { color: #10b981; }
+        .health-score.yellow { color: #f59e0b; }
+        .health-score.red { color: #ef4444; }
+        
+        .health-status {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-            margin-bottom: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
         }
         
         .stat-card {
             background: #1a1f3a;
-            border-radius: 12px;
-            padding: 16px;
-            border-left: 4px solid #667eea;
+            border-radius: 10px;
+            padding: 12px;
+            border-left: 3px solid #667eea;
+            transition: transform 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
         }
         
         .stat-card.positive { border-left-color: #10b981; }
@@ -55,56 +106,61 @@
         .stat-card.warning { border-left-color: #f59e0b; }
         
         .stat-label {
-            font-size: 11px;
+            font-size: 10px;
             color: #9ca3af;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             letter-spacing: 0.5px;
+            font-weight: 600;
         }
         
         .stat-value {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 4px;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 2px;
         }
         
-        .stat-value.large { font-size: 32px; }
+        .stat-value.large { font-size: 26px; }
         .stat-value.green { color: #10b981; }
         .stat-value.red { color: #ef4444; }
         .stat-value.yellow { color: #f59e0b; }
         
         .stat-change {
-            font-size: 12px;
+            font-size: 11px;
             color: #9ca3af;
         }
         
+        /* Section */
         .section {
             background: #1a1f3a;
             border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
         }
         
         .section-header {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
         .badge {
-            font-size: 11px;
+            font-size: 10px;
             padding: 4px 8px;
             border-radius: 4px;
             background: #374151;
             color: #9ca3af;
+            font-weight: 600;
         }
         
         .badge.success { background: #10b981; color: white; }
         .badge.danger { background: #ef4444; color: white; }
+        .badge.warning { background: #f59e0b; color: white; }
         
+        /* Table */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -112,53 +168,61 @@
         
         th {
             text-align: left;
-            padding: 12px;
+            padding: 10px 8px;
             border-bottom: 2px solid #374151;
             color: #9ca3af;
-            font-size: 11px;
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-weight: 600;
         }
         
         td {
-            padding: 12px;
+            padding: 10px 8px;
             border-bottom: 1px solid #374151;
+            font-size: 12px;
         }
         
         tr:hover { background: #0f1629; }
         
-        .position-item {
-            background: #0f1629;
+        /* Alert */
+        .alert {
+            background: #7f1d1d;
+            border-left: 4px solid #ef4444;
+            padding: 14px;
             border-radius: 8px;
-            padding: 16px;
             margin-bottom: 12px;
-            border-left: 4px solid #667eea;
+            animation: alertPulse 2s infinite;
         }
         
-        .position-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
+        @keyframes alertPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
         }
         
-        .position-symbol {
-            font-size: 18px;
-            font-weight: bold;
+        .alert-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+            font-size: 14px;
         }
         
-        .position-pnl {
-            font-size: 18px;
-            font-weight: bold;
+        /* Button */
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.2s;
         }
         
-        .position-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
-            font-size: 12px;
-            color: #9ca3af;
-        }
+        .btn:hover { background: #5568d3; }
         
+        /* Loading */
         .loading {
             text-align: center;
             padding: 60px 20px;
@@ -180,42 +244,27 @@
             100% { transform: rotate(360deg); }
         }
         
-        .refresh-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        
-        .refresh-btn:hover { background: #5568d3; }
-        
-        .alert {
-            background: #7f1d1d;
-            border-left: 4px solid #ef4444;
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: #6b7280;
+            font-size: 11px;
+            margin-top: 20px;
             padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 16px;
         }
         
-        .alert-title {
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
-        
+        /* Mobile Responsive */
         @media (max-width: 768px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
             
-            .stat-value { font-size: 24px; }
-            .stat-value.large { font-size: 28px; }
+            .stat-value { font-size: 20px; }
+            .stat-value.large { font-size: 24px; }
+            .health-score { font-size: 42px; }
             
-            table { font-size: 12px; }
-            th, td { padding: 8px; }
+            table { font-size: 11px; }
+            th, td { padding: 8px 6px; }
         }
     </style>
 </head>
@@ -227,21 +276,10 @@
         
         async function fetchData() {
             try {
-                const [analyticsRes, positionsRes] = await Promise.all([
-                    fetch(`${API_BASE}/data/analytics.json?t=${Date.now()}`),
-                    fetch(`${API_BASE}/data/positions.json?t=${Date.now()}`)
-                ]);
-                
+                const timestamp = Date.now();
+                const analyticsRes = await fetch(`${API_BASE}/data/analytics.json?t=${timestamp}`);
                 const analytics = await analyticsRes.json();
-                let positions = null;
-                
-                try {
-                    positions = await positionsRes.json();
-                } catch (e) {
-                    positions = { account: analytics, positions: [] };
-                }
-                
-                return { analytics, positions };
+                return analytics;
             } catch (error) {
                 console.error('Error:', error);
                 return null;
@@ -252,7 +290,8 @@
             return new Intl.NumberFormat('en-US', {
                 style: 'currency',
                 currency: 'USD',
-                minimumFractionDigits: 2
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
             }).format(value);
         }
         
@@ -270,6 +309,18 @@
             });
         }
         
+        function getHealthColor(score) {
+            if (score >= 80) return 'green';
+            if (score >= 60) return 'yellow';
+            return 'red';
+        }
+        
+        function getHealthStatus(score) {
+            if (score >= 80) return '✅ HEALTHY - Continue Trading';
+            if (score >= 60) return '⚠️ CAUTION - Monitor Closely';
+            return '🛑 PAUSE - Review Required';
+        }
+        
         function render(data) {
             const app = document.getElementById('app');
             
@@ -277,142 +328,234 @@
                 app.innerHTML = `
                     <div class="loading">
                         <div class="spinner"></div>
-                        <p>Loading trading data...</p>
+                        <p>Loading professional trading dashboard...</p>
                     </div>
                 `;
                 return;
             }
             
-            const { analytics, positions } = data;
+            const tm = data.trade_metrics;
+            const rm = data.risk_metrics;
+            const healthColor = getHealthColor(data.health_score);
+            const healthStatus = getHealthStatus(data.health_score);
             
-            const totalReturnClass = analytics.total_return_pct >= 0 ? 'positive' : 'negative';
-            const totalReturnColor = analytics.total_return_pct >= 0 ? 'green' : 'red';
-            
-            const winRateClass = analytics.win_rate >= 60 ? 'positive' : analytics.win_rate >= 40 ? 'warning' : 'negative';
-            
-            // Check for alerts
-            const alerts = [];
-            if (analytics.total_return_pct < -5) {
-                alerts.push({
-                    title: 'Portfolio Alert',
-                    message: `Portfolio down ${Math.abs(analytics.total_return_pct).toFixed(2)}% - Review positions`
-                });
-            }
+            const totalReturnClass = data.total_return_pct >= 0 ? 'positive' : 'negative';
+            const totalReturnColor = data.total_return_pct >= 0 ? 'green' : 'red';
             
             app.innerHTML = `
+                <!-- Header -->
                 <div class="header">
-                    <h1>📊 RAYR OPTIONS</h1>
-                    <div class="live">● LIVE</div>
+                    <h1>📊 RAYR OPTIONS PRO</h1>
+                    <div class="live-badge">● LIVE</div>
                 </div>
                 
-                ${alerts.length > 0 ? alerts.map(alert => `
+                <!-- Kill Switch Alert -->
+                ${data.kill_switch.active ? `
                     <div class="alert">
-                        <div class="alert-title">${alert.title}</div>
-                        <div>${alert.message}</div>
+                        <div class="alert-title">🛑 TRADING PAUSED</div>
+                        <div>${data.kill_switch.reasons.join(' • ')}</div>
+                        <div style="margin-top: 8px; font-weight: 600;">${data.kill_switch.recommendation}</div>
                     </div>
-                `).join('') : ''}
+                ` : ''}
+                
+                <!-- Health Score -->
+                <div class="health-section">
+                    <div class="stat-label">System Health Score</div>
+                    <div class="health-score ${healthColor}">${data.health_score}/100</div>
+                    <div class="health-status">${healthStatus}</div>
+                    <div style="margin-top: 8px; font-size: 11px; color: #9ca3af;">
+                        Regime: ${data.market_regime.regime} (${data.market_regime.confidence}%)
+                    </div>
+                </div>
+                
+                <!-- Account Summary -->
+                <div class="section-header" style="margin-bottom: 12px;">
+                    <span>💰 Account Summary</span>
+                </div>
                 
                 <div class="stats-grid">
                     <div class="stat-card ${totalReturnClass}">
                         <div class="stat-label">Portfolio Value</div>
-                        <div class="stat-value large">${formatCurrency(analytics.current_value)}</div>
-                        <div class="stat-change">Initial: ${formatCurrency(analytics.initial_capital)}</div>
+                        <div class="stat-value large">${formatCurrency(data.current_value)}</div>
+                        <div class="stat-change">Start: ${formatCurrency(data.initial_capital)}</div>
                     </div>
                     
                     <div class="stat-card ${totalReturnClass}">
                         <div class="stat-label">Total Return</div>
-                        <div class="stat-value large ${totalReturnColor}">${formatPercent(analytics.total_return_pct)}</div>
-                        <div class="stat-change">${formatCurrency(analytics.total_profit_usd)}</div>
+                        <div class="stat-value large ${totalReturnColor}">${formatPercent(data.total_return_pct)}</div>
+                        <div class="stat-change">${formatCurrency(data.total_profit_usd)}</div>
                     </div>
                     
                     <div class="stat-card">
-                        <div class="stat-label">Cash Available</div>
-                        <div class="stat-value">${formatCurrency(analytics.current_cash)}</div>
-                        <div class="stat-change">Equity: ${formatCurrency(analytics.equity)}</div>
+                        <div class="stat-label">Cash</div>
+                        <div class="stat-value">${formatCurrency(data.current_cash)}</div>
+                        <div class="stat-change">Available</div>
                     </div>
                     
-                    <div class="stat-card ${winRateClass}">
+                    <div class="stat-card">
+                        <div class="stat-label">Equity</div>
+                        <div class="stat-value">${formatCurrency(data.equity)}</div>
+                        <div class="stat-change">In positions</div>
+                    </div>
+                </div>
+                
+                <!-- Performance Metrics -->
+                <div class="section-header" style="margin-bottom: 12px;">
+                    <span>📈 Performance Metrics</span>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card ${tm.win_rate >= 60 ? 'positive' : tm.win_rate >= 40 ? 'warning' : 'negative'}">
                         <div class="stat-label">Win Rate</div>
-                        <div class="stat-value">${analytics.win_rate.toFixed(1)}%</div>
-                        <div class="stat-change">${analytics.winning_trades}W / ${analytics.losing_trades}L</div>
+                        <div class="stat-value">${tm.win_rate.toFixed(1)}%</div>
+                        <div class="stat-change">${tm.winning_trades}W / ${tm.losing_trades}L</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">Avg Winner</div>
+                        <div class="stat-value green">${formatCurrency(tm.avg_winner)}</div>
+                        <div class="stat-change">Per trade</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">Avg Loser</div>
+                        <div class="stat-value red">${formatCurrency(tm.avg_loser)}</div>
+                        <div class="stat-change">Per trade</div>
+                    </div>
+                    
+                    <div class="stat-card ${tm.expectancy >= 0 ? 'positive' : 'negative'}">
+                        <div class="stat-label">Expectancy</div>
+                        <div class="stat-value ${tm.expectancy >= 0 ? 'green' : 'red'}">${formatCurrency(tm.expectancy)}</div>
+                        <div class="stat-change">Per trade</div>
+                    </div>
+                    
+                    <div class="stat-card ${tm.profit_factor >= 1.5 ? 'positive' : tm.profit_factor >= 1.0 ? 'warning' : 'negative'}">
+                        <div class="stat-label">Profit Factor</div>
+                        <div class="stat-value">${tm.profit_factor.toFixed(2)}</div>
+                        <div class="stat-change">${tm.profit_factor >= 1.5 ? 'Excellent' : tm.profit_factor >= 1.0 ? 'Good' : 'Poor'}</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">Consecutive</div>
+                        <div class="stat-value">${tm.consecutive_wins}W / ${tm.consecutive_losses}L</div>
+                        <div class="stat-change">Current streak</div>
                     </div>
                     
                     <div class="stat-card">
                         <div class="stat-label">Daily Return</div>
-                        <div class="stat-value ${analytics.daily_return_pct >= 0 ? 'green' : 'red'}">${formatPercent(analytics.daily_return_pct)}</div>
-                        <div class="stat-change">Avg per day</div>
+                        <div class="stat-value ${data.daily_return_pct >= 0 ? 'green' : 'red'}">${formatPercent(data.daily_return_pct)}</div>
+                        <div class="stat-change">Average</div>
                     </div>
                     
                     <div class="stat-card">
                         <div class="stat-label">Weekly Return</div>
-                        <div class="stat-value ${analytics.weekly_return_pct >= 0 ? 'green' : 'red'}">${formatPercent(analytics.weekly_return_pct)}</div>
-                        <div class="stat-change">Avg per week</div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-label">Monthly Return</div>
-                        <div class="stat-value ${analytics.monthly_return_pct >= 0 ? 'green' : 'red'}">${formatPercent(analytics.monthly_return_pct)}</div>
-                        <div class="stat-change">Avg per month</div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-label">Avg Profit/Trade</div>
-                        <div class="stat-value">${formatCurrency(analytics.avg_profit_per_trade)}</div>
-                        <div class="stat-change">${analytics.total_trades} total trades</div>
+                        <div class="stat-value ${data.weekly_return_pct >= 0 ? 'green' : 'red'}">${formatPercent(data.weekly_return_pct)}</div>
+                        <div class="stat-change">Average</div>
                     </div>
                 </div>
                 
-                ${positions.positions && positions.positions.length > 0 ? `
-                    <div class="section">
-                        <div class="section-header">
-                            Open Positions
-                            <span class="badge">${positions.positions.length} Active</span>
-                        </div>
-                        
-                        ${positions.positions.map(pos => {
-                            const pnlColor = pos.unrealized_pl >= 0 ? 'green' : 'red';
-                            const pnlPct = (pos.unrealized_plpc * 100).toFixed(2);
-                            
-                            return `
-                                <div class="position-item">
-                                    <div class="position-header">
-                                        <div class="position-symbol">${pos.symbol}</div>
-                                        <div class="position-pnl" style="color: ${pnlColor === 'green' ? '#10b981' : '#ef4444'}">
-                                            ${formatCurrency(pos.unrealized_pl)} (${pnlPct >= 0 ? '+' : ''}${pnlPct}%)
-                                        </div>
-                                    </div>
-                                    <div class="position-details">
-                                        <div>
-                                            <div style="color: #9ca3af; font-size: 10px;">SHARES</div>
-                                            <div style="font-weight: bold;">${pos.qty}</div>
-                                        </div>
-                                        <div>
-                                            <div style="color: #9ca3af; font-size: 10px;">AVG PRICE</div>
-                                            <div style="font-weight: bold;">${formatCurrency(pos.avg_price)}</div>
-                                        </div>
-                                        <div>
-                                            <div style="color: #9ca3af; font-size: 10px;">CURRENT</div>
-                                            <div style="font-weight: bold;">${formatCurrency(pos.current_price)}</div>
-                                        </div>
-                                        <div>
-                                            <div style="color: #9ca3af; font-size: 10px;">VALUE</div>
-                                            <div style="font-weight: bold;">${formatCurrency(pos.market_value)}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                ` : ''}
-                
+                <!-- Risk Metrics -->
                 <div class="section">
                     <div class="section-header">
-                        Recent Trades
-                        <span class="badge">${analytics.recent_trades.length} Shown</span>
+                        <span>⚠️ Risk Metrics</span>
                     </div>
                     
-                    ${analytics.recent_trades.length === 0 ? 
-                        '<p style="text-align: center; color: #9ca3af; padding: 40px;">No trades yet</p>' :
+                    <div class="stats-grid">
+                        <div class="stat-card ${rm.current_drawdown_pct > 5 ? 'negative' : 'positive'}">
+                            <div class="stat-label">Current Drawdown</div>
+                            <div class="stat-value ${rm.current_drawdown_pct > 5 ? 'red' : 'green'}">${rm.current_drawdown_pct.toFixed(2)}%</div>
+                            <div class="stat-change">${formatCurrency(rm.current_drawdown_usd)}</div>
+                        </div>
+                        
+                        <div class="stat-card ${rm.max_drawdown_pct > 10 ? 'negative' : 'warning'}">
+                            <div class="stat-label">Max Drawdown</div>
+                            <div class="stat-value">${rm.max_drawdown_pct.toFixed(2)}%</div>
+                            <div class="stat-change">${formatCurrency(rm.max_drawdown_usd)}</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-label">Sharpe Ratio</div>
+                            <div class="stat-value">${rm.sharpe_ratio.toFixed(2)}</div>
+                            <div class="stat-change">Risk-adjusted</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-label">Volatility</div>
+                            <div class="stat-value">${rm.volatility.toFixed(2)}%</div>
+                            <div class="stat-change">Daily std dev</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ticker Performance -->
+                <div class="section">
+                    <div class="section-header">
+                        <span>🎯 Performance by Ticker</span>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ticker</th>
+                                <th>Trades</th>
+                                <th>Win Rate</th>
+                                <th>Total P&L</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.entries(data.ticker_performance).map(([symbol, perf]) => `
+                                <tr>
+                                    <td style="font-weight: 700;">${symbol}</td>
+                                    <td>${perf.trades}</td>
+                                    <td>${perf.win_rate.toFixed(1)}%</td>
+                                    <td style="color: ${perf.total_pnl >= 0 ? '#10b981' : '#ef4444'}">
+                                        ${formatCurrency(perf.total_pnl)}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Time of Day Performance -->
+                <div class="section">
+                    <div class="section-header">
+                        <span>🕐 Performance by Time of Day</span>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Period</th>
+                                <th>Trades</th>
+                                <th>Win Rate</th>
+                                <th>Avg Return</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.entries(data.time_performance).map(([period, perf]) => `
+                                <tr>
+                                    <td style="font-weight: 700; text-transform: capitalize;">${period}</td>
+                                    <td>${perf.trades}</td>
+                                    <td>${perf.win_rate.toFixed(1)}%</td>
+                                    <td style="color: ${perf.avg_return >= 0 ? '#10b981' : '#ef4444'}">
+                                        ${perf.avg_return.toFixed(2)}%
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Recent Trades -->
+                <div class="section">
+                    <div class="section-header">
+                        <span>📝 Recent Trades</span>
+                        <span class="badge">${data.recent_trades.length}</span>
+                    </div>
+                    
+                    ${data.recent_trades.length === 0 ? 
+                        '<p style="text-align: center; color: #9ca3af; padding: 30px;">No trades yet</p>' :
                         `
                         <table>
                             <thead>
@@ -426,10 +569,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                ${analytics.recent_trades.map(trade => `
+                                ${data.recent_trades.map(trade => `
                                     <tr>
                                         <td>${formatDate(trade.timestamp)}</td>
-                                        <td style="font-weight: bold;">${trade.symbol}</td>
+                                        <td style="font-weight: 700;">${trade.symbol}</td>
                                         <td>$${trade.strike.toFixed(2)}</td>
                                         <td>$${trade.premium.toFixed(2)}</td>
                                         <td style="color: ${trade.return_pct >= 0.5 ? '#10b981' : '#f59e0b'}">
@@ -446,15 +589,16 @@
                     }
                 </div>
                 
-                <div style="text-align: center; margin-top: 24px;">
-                    <button class="refresh-btn" onclick="location.reload()">
-                        🔄 Refresh Data
-                    </button>
-                </div>
+                <!-- Refresh Button -->
+                <button class="btn" onclick="location.reload()">
+                    🔄 Refresh Dashboard
+                </button>
                 
-                <div style="text-align: center; color: #6b7280; font-size: 12px; margin-top: 24px; padding: 16px;">
-                    Last updated: ${formatDate(analytics.last_updated)}<br>
-                    Running for ${analytics.days_running} days | Automated via GitHub Actions
+                <!-- Footer -->
+                <div class="footer">
+                    Last updated: ${formatDate(data.last_updated)}<br>
+                    Running for ${data.days_running} days • ${data.total_trades} total trades<br>
+                    Automated via GitHub Actions
                 </div>
             `;
         }
@@ -462,10 +606,10 @@
         // Initial load
         fetchData().then(render);
         
-        // Auto-refresh every 60 seconds
+        // Auto-refresh every 30 seconds
         setInterval(() => {
             fetchData().then(render);
-        }, 60000);
+        }, 30000);
     </script>
 </body>
 </html>
