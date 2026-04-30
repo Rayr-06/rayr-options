@@ -1,0 +1,29 @@
+[
+  {
+    "timestamp": "2026-04-30T09:05:40.757878",
+    "account": {
+      "cash": 100000.0,
+      "buying_power": 197284.2,
+      "portfolio_value": 100000.0,
+      "equity": 100000.0
+    },
+    "opportunity": {
+      "symbol": "IWM",
+      "current_price": 271.09000000000003,
+      "strike": 267.38,
+      "premium": 1.66,
+      "return_pct": 0.6223881414692086,
+      "annual_return": 32.36418335639885,
+      "iv": 0.22,
+      "expiry": "2026-05-07"
+    },
+    "order": {
+      "id": "908d2a47-331f-4609-acef-5103d2ff3263",
+      "symbol": "IWM",
+      "qty": "10",
+      "side": "OrderSide.BUY",
+      "status": "OrderStatus.ACCEPTED",
+      "submitted_at": "2026-04-30 03:35:42.148320+00:00"
+    }
+  }
+]
