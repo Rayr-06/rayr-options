@@ -69,6 +69,20 @@
             50% { opacity: 0.7; box-shadow: 0 0 0 10px transparent; }
         }
         
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-running { background: var(--success); }
+        .status-stopped { background: var(--danger); }
+        .status-analyzing { background: var(--warning); }
+        
         /* Tabs */
         .tabs {
             display: flex;
@@ -124,6 +138,63 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+        
+        /* Help Tooltips */
+        .help-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            font-size: 13px;
+            cursor: help;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .help-icon:hover {
+            background: rgba(255,255,255,0.5);
+            transform: scale(1.1);
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltiptext {
+            visibility: hidden;
+            width: 280px;
+            background-color: #1a1f3a;
+            color: #fff;
+            text-align: left;
+            border-radius: 10px;
+            padding: 15px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -140px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 13px;
+            line-height: 1.6;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Mobile tooltip (tap) */
+        .tooltiptext.show-mobile {
+            visibility: visible;
+            opacity: 1;
         }
         
         /* Grid Layouts */
@@ -188,6 +259,36 @@
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .btn.loading {
+            color: transparent;
         }
         
         .btn-success {
@@ -195,7 +296,7 @@
             color: white;
         }
         
-        .btn-success:hover {
+        .btn-success:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
         }
@@ -205,7 +306,7 @@
             color: white;
         }
         
-        .btn-danger:hover {
+        .btn-danger:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
         }
@@ -215,9 +316,63 @@
             color: white;
         }
         
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            color: #1a1f3a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 350px;
+            z-index: 2000;
+            animation: slideIn 0.3s ease-out;
+            display: none;
+        }
+        
+        .notification.show {
+            display: block;
+        }
+        
+        .notification.success {
+            border-left: 5px solid var(--success);
+        }
+        
+        .notification.error {
+            border-left: 5px solid var(--danger);
+        }
+        
+        .notification.warning {
+            border-left: 5px solid var(--warning);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .notification-message {
+            font-size: 14px;
+            line-height: 1.5;
         }
         
         /* Signal Bars */
@@ -316,64 +471,6 @@
             z-index: 1;
         }
         
-        /* Strategy Cards */
-        .strategy-card {
-            background: rgba(0,0,0,0.2);
-            border-radius: 10px;
-            padding: 15px;
-        }
-        
-        .strategy-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .strategy-name {
-            font-size: 16px;
-            font-weight: bold;
-        }
-        
-        .strategy-status {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .status-active {
-            background: var(--success);
-            color: white;
-        }
-        
-        .status-paused {
-            background: var(--warning);
-            color: white;
-        }
-        
-        .metric-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            font-size: 14px;
-        }
-        
-        /* Help Icon */
-        .help-icon {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 50%;
-            text-align: center;
-            line-height: 20px;
-            font-size: 12px;
-            cursor: help;
-            margin-left: 5px;
-        }
-        
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .grid-2, .grid-3, .grid-4 {
@@ -385,13 +482,16 @@
                 text-align: center;
             }
             
-            .tabs {
-                justify-content: flex-start;
+            .notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
             }
             
-            .tab {
-                font-size: 14px;
-                padding: 10px 15px;
+            .tooltiptext {
+                width: 250px;
+                margin-left: -125px;
             }
         }
         
@@ -408,10 +508,13 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <div class="logo">🏆 RAYR OPTIONS - MASTER CONTROL</div>
+            <div class="logo">🏆 RAYR OPTIONS PRO</div>
             <div class="live-status">
                 <div class="pulse"></div>
-                <div>LIVE</div>
+                <div class="status-badge status-stopped" id="botStatus">
+                    <span>⏸️</span>
+                    <span id="botStatusText">INITIALIZING</span>
+                </div>
                 <div style="opacity: 0.7; font-size: 14px;" id="lastUpdate">Loading...</div>
             </div>
         </div>
@@ -420,10 +523,10 @@
         <div class="tabs">
             <div class="tab active" onclick="switchTab('overview')">📊 OVERVIEW</div>
             <div class="tab" onclick="switchTab('controls')">🎮 CONTROLS</div>
-            <div class="tab" onclick="switchTab('signals')">⚡ LIVE SIGNALS</div>
-            <div class="tab" onclick="switchTab('performance')">📈 PERFORMANCE</div>
+            <div class="tab" onclick="switchTab('signals')">⚡ SIGNALS</div>
+            <div class="tab" onclick="switchTab('performance')">📈 STATS</div>
             <div class="tab" onclick="switchTab('risk')">⚠️ RISK</div>
-            <div class="tab" onclick="switchTab('decisions')">🧠 DECISIONS</div>
+            <div class="tab" onclick="switchTab('decisions')">🧠 LOG</div>
         </div>
 
         <!-- OVERVIEW TAB -->
@@ -434,7 +537,19 @@
                     <div class="health-circle" id="healthCircle">
                         <div class="health-value" id="healthValue">0</div>
                     </div>
-                    <div style="font-size: 24px; font-weight: bold;">System Health Score</div>
+                    <div style="font-size: 24px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        System Health Score
+                        <span class="tooltip">
+                            <span class="help-icon" onclick="toggleTooltip(event)">?</span>
+                            <span class="tooltiptext">
+                                <strong>What is Health Score?</strong><br>
+                                0-40 = Poor (bot won't trade)<br>
+                                40-70 = Fair (watching closely)<br>
+                                70-100 = Excellent (ready to trade)<br><br>
+                                Combines: confidence, win rate, risk metrics, market conditions.
+                            </span>
+                        </span>
+                    </div>
                     <div style="opacity: 0.8; margin-top: 10px;" id="healthStatus">Initializing...</div>
                 </div>
             </div>
@@ -443,28 +558,70 @@
             <div class="grid-4">
                 <div class="card">
                     <div class="metric">
-                        <div class="metric-label">Portfolio Value</div>
+                        <div class="metric-label" style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                            Portfolio Value
+                            <span class="tooltip">
+                                <span class="help-icon" onclick="toggleTooltip(event)">?</span>
+                                <span class="tooltiptext">
+                                    <strong>Your Account Balance</strong><br>
+                                    Starting: $100,000 (paper money)<br>
+                                    Current value = Initial + Total P&L
+                                </span>
+                            </span>
+                        </div>
                         <div class="metric-value" id="portfolioValue">$100,000</div>
                         <div class="metric-sublabel">Initial: $100,000</div>
                     </div>
                 </div>
                 <div class="card">
                     <div class="metric">
-                        <div class="metric-label">Total Return</div>
+                        <div class="metric-label" style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                            Total Return
+                            <span class="tooltip">
+                                <span class="help-icon" onclick="toggleTooltip(event)">?</span>
+                                <span class="tooltiptext">
+                                    <strong>Overall Profit/Loss</strong><br>
+                                    Percentage gain or loss from starting capital.<br>
+                                    Target: +20-30% annually
+                                </span>
+                            </span>
+                        </div>
                         <div class="metric-value" id="totalReturn">+0.00%</div>
                         <div class="metric-sublabel" id="totalReturnDollar">$0</div>
                     </div>
                 </div>
                 <div class="card">
                     <div class="metric">
-                        <div class="metric-label">Win Rate</div>
+                        <div class="metric-label" style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                            Win Rate
+                            <span class="tooltip">
+                                <span class="help-icon" onclick="toggleTooltip(event)">?</span>
+                                <span class="tooltiptext">
+                                    <strong>How Often Bot Wins</strong><br>
+                                    Percentage of profitable trades.<br>
+                                    Target: >55%
+                                </span>
+                            </span>
+                        </div>
                         <div class="metric-value" id="winRate">0.0%</div>
                         <div class="metric-sublabel" id="winLoss">0W / 0L</div>
                     </div>
                 </div>
                 <div class="card">
                     <div class="metric">
-                        <div class="metric-label">Profit Factor</div>
+                        <div class="metric-label" style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                            Profit Factor
+                            <span class="tooltip">
+                                <span class="help-icon" onclick="toggleTooltip(event)">?</span>
+                                <span class="tooltiptext">
+                                    <strong>Quality of Wins vs Losses</strong><br>
+                                    Total wins ÷ Total losses<br>
+                                    >1.0 = profitable<br>
+                                    >1.5 = good<br>
+                                    >2.0 = excellent
+                                </span>
+                            </span>
+                        </div>
                         <div class="metric-value" id="profitFactor">0.00</div>
                         <div class="metric-sublabel">Target: >1.5</div>
                     </div>
@@ -473,12 +630,24 @@
 
             <!-- Quick Actions -->
             <div class="card">
-                <div class="card-title">⚡ Quick Actions</div>
+                <div class="card-title">
+                    ⚡ Quick Actions
+                    <span class="tooltip">
+                        <span class="help-icon" onclick="toggleTooltip(event)">?</span>
+                        <span class="tooltiptext">
+                            <strong>Control Your Bot</strong><br>
+                            START = Activate trading<br>
+                            STOP = Pause bot<br>
+                            SCAN = Analyze markets now<br>
+                            REFRESH = Update dashboard
+                        </span>
+                    </span>
+                </div>
                 <div class="btn-group">
-                    <button class="btn btn-success" onclick="startBot()">▶️ START TRADING</button>
-                    <button class="btn btn-danger" onclick="stopBot()">⏹️ STOP TRADING</button>
-                    <button class="btn btn-primary" onclick="scanMarkets()">🔍 SCAN NOW</button>
-                    <button class="btn btn-primary" onclick="refreshData()">🔄 REFRESH</button>
+                    <button class="btn btn-success" id="btnStart" onclick="startBot()">▶️ START TRADING</button>
+                    <button class="btn btn-danger" id="btnStop" onclick="stopBot()">⏹️ STOP TRADING</button>
+                    <button class="btn btn-primary" id="btnScan" onclick="scanMarkets()">🔍 SCAN NOW</button>
+                    <button class="btn btn-primary" id="btnRefresh" onclick="refreshData()">🔄 REFRESH</button>
                 </div>
             </div>
         </div>
@@ -486,7 +655,17 @@
         <!-- CONTROLS TAB -->
         <div id="tab-controls" class="tab-content">
             <div class="card">
-                <div class="card-title">🎮 Master Controls</div>
+                <div class="card-title">
+                    🎮 Master Controls
+                    <span class="tooltip">
+                        <span class="help-icon" onclick="toggleTooltip(event)">?</span>
+                        <span class="tooltiptext">
+                            <strong>Bot Control Center</strong><br>
+                            These buttons trigger GitHub Actions to run your trading bot immediately.<br>
+                            Requires GitHub token in config.js
+                        </span>
+                    </span>
+                </div>
                 <div class="btn-group">
                     <button class="btn btn-success" onclick="startBot()">▶️ START ALL</button>
                     <button class="btn btn-danger" onclick="stopBot()">⏹️ STOP ALL</button>
@@ -495,69 +674,19 @@
                 </div>
             </div>
 
-            <!-- Strategy Controls -->
+            <!-- Setup Instructions -->
             <div class="card">
-                <div class="card-title">💰 Strategy Management</div>
-                <div class="grid-3">
-                    <div class="strategy-card">
-                        <div class="strategy-header">
-                            <div class="strategy-name">💰 Premium Selling</div>
-                            <div class="strategy-status status-active">ACTIVE</div>
-                        </div>
-                        <div class="metric-row">
-                            <span>Trades</span>
-                            <span id="premium-trades">0</span>
-                        </div>
-                        <div class="metric-row">
-                            <span>Win Rate</span>
-                            <span id="premium-winrate">--%</span>
-                        </div>
-                        <div class="metric-row">
-                            <span>P&L</span>
-                            <span id="premium-pnl">$0</span>
-                        </div>
-                        <button class="btn btn-danger" style="width: 100%; margin-top: 10px;">⏸️ PAUSE</button>
-                    </div>
-
-                    <div class="strategy-card">
-                        <div class="strategy-header">
-                            <div class="strategy-name">🚀 Momentum</div>
-                            <div class="strategy-status status-paused">PHASE 2</div>
-                        </div>
-                        <div class="metric-row">
-                            <span>Trades</span>
-                            <span>0</span>
-                        </div>
-                        <div class="metric-row">
-                            <span>Win Rate</span>
-                            <span>--%</span>
-                        </div>
-                        <div class="metric-row">
-                            <span>P&L</span>
-                            <span>$0</span>
-                        </div>
-                        <button class="btn btn-success" style="width: 100%; margin-top: 10px;">▶️ ACTIVATE</button>
-                    </div>
-
-                    <div class="strategy-card">
-                        <div class="strategy-header">
-                            <div class="strategy-name">🔄 Mean Reversion</div>
-                            <div class="strategy-status status-paused">PHASE 2</div>
-                        </div>
-                        <div class="metric-row">
-                            <span>Trades</span>
-                            <span>0</span>
-                        </div>
-                        <div class="metric-row">
-                            <span>Win Rate</span>
-                            <span>--%</span>
-                        </div>
-                        <div class="metric-row">
-                            <span>P&L</span>
-                            <span>$0</span>
-                        </div>
-                        <button class="btn btn-success" style="width: 100%; margin-top: 10px;">▶️ ACTIVATE</button>
-                    </div>
+                <div class="card-title">⚙️ Setup Required</div>
+                <div style="line-height: 1.8;">
+                    <p><strong>To enable bot controls:</strong></p>
+                    <ol style="margin-left: 20px; margin-top: 10px;">
+                        <li>Create <code>config.js</code> in your project root</li>
+                        <li>Add your GitHub Personal Access Token</li>
+                        <li>Buttons will then control the bot in real-time</li>
+                    </ol>
+                    <p style="margin-top: 15px; opacity: 0.8;">
+                        See README.md for detailed setup instructions.
+                    </p>
                 </div>
             </div>
         </div>
@@ -565,7 +694,17 @@
         <!-- SIGNALS TAB -->
         <div id="tab-signals" class="tab-content">
             <div class="card">
-                <div class="card-title">⚡ Live Market Signals</div>
+                <div class="card-title">
+                    ⚡ Live Market Signals
+                    <span class="tooltip">
+                        <span class="help-icon" onclick="toggleTooltip(event)">?</span>
+                        <span class="tooltiptext">
+                            <strong>What Bot Is Seeing</strong><br>
+                            These bars show real-time market analysis.<br>
+                            Bot only trades when Confidence >60
+                        </span>
+                    </span>
+                </div>
                 
                 <div class="signal-bar-container">
                     <div class="signal-label">
@@ -609,7 +748,18 @@
             </div>
 
             <div class="card">
-                <div class="card-title">🌐 Market Regime</div>
+                <div class="card-title">
+                    🌐 Market Regime
+                    <span class="tooltip">
+                        <span class="help-icon" onclick="toggleTooltip(event)">?</span>
+                        <span class="tooltiptext">
+                            <strong>Market Conditions</strong><br>
+                            LOW VOL = Calm, ideal for premium selling<br>
+                            NORMAL = Standard conditions<br>
+                            HIGH VOL = Risky, reduce position sizes
+                        </span>
+                    </span>
+                </div>
                 <div class="metric">
                     <div class="metric-value" id="marketRegime">UNKNOWN</div>
                     <div class="metric-label" id="regimeConfidence">Confidence: 0%</div>
@@ -650,15 +800,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="card">
-                <div class="card-title">📊 Trade History</div>
-                <div style="text-align: center; padding: 30px; opacity: 0.7;">
-                    <div style="font-size: 48px; margin-bottom: 15px;">📈</div>
-                    <div>No trades executed yet</div>
-                    <div style="font-size: 14px; margin-top: 10px;">Trades will appear here once the bot starts trading</div>
-                </div>
-            </div>
         </div>
 
         <!-- RISK TAB -->
@@ -682,7 +823,7 @@
                     <div class="metric">
                         <div class="metric-label">Sharpe Ratio</div>
                         <div class="metric-value" id="sharpeRatio">0.00</div>
-                        <div class="metric-sublabel">Risk-adjusted return</div>
+                        <div class="metric-sublabel">Risk-adjusted</div>
                     </div>
                 </div>
                 <div class="card">
@@ -695,31 +836,34 @@
             </div>
 
             <div class="card">
-                <div class="card-title">⚠️ Risk Controls</div>
+                <div class="card-title">
+                    ⚠️ Risk Controls
+                    <span class="tooltip">
+                        <span class="help-icon" onclick="toggleTooltip(event)">?</span>
+                        <span class="tooltiptext">
+                            <strong>How We Protect You</strong><br>
+                            Multiple safety layers prevent catastrophic losses.
+                        </span>
+                    </span>
+                </div>
                 <div style="line-height: 1.8;">
-                    <div class="metric-row">
-                        <span>Position Size</span>
-                        <span>Kelly × 0.5 safety</span>
+                    <div style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <strong>Position Size:</strong> Kelly × 0.5 safety
                     </div>
-                    <div class="metric-row">
-                        <span>Confidence Threshold</span>
-                        <span>>60%</span>
+                    <div style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <strong>Confidence Threshold:</strong> >60%
                     </div>
-                    <div class="metric-row">
-                        <span>Daily Loss Limit</span>
-                        <span>2% max</span>
+                    <div style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <strong>Daily Loss Limit:</strong> 2% max
                     </div>
-                    <div class="metric-row">
-                        <span>Weekly Drawdown</span>
-                        <span>8% triggers size reduction</span>
+                    <div style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <strong>Weekly Drawdown:</strong> 8% triggers size reduction
                     </div>
-                    <div class="metric-row">
-                        <span>Kill Switch</span>
-                        <span>15% monthly loss</span>
+                    <div style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <strong>Kill Switch:</strong> 15% monthly loss
                     </div>
-                    <div class="metric-row">
-                        <span>Consecutive Losses</span>
-                        <span>3 losses = pause</span>
+                    <div style="padding: 10px 0;">
+                        <strong>Consecutive Losses:</strong> 3 losses = pause
                     </div>
                 </div>
             </div>
@@ -728,7 +872,16 @@
         <!-- DECISIONS TAB -->
         <div id="tab-decisions" class="tab-content">
             <div class="card">
-                <div class="card-title">🧠 What's The Bot Thinking?</div>
+                <div class="card-title">
+                    🧠 What's The Bot Thinking?
+                    <span class="tooltip">
+                        <span class="help-icon" onclick="toggleTooltip(event)">?</span>
+                        <span class="tooltiptext">
+                            <strong>Live Decision Log</strong><br>
+                            Real-time stream of bot's analysis and decisions.
+                        </span>
+                    </span>
+                </div>
                 <div class="log-entries" id="decisionLog">
                     <div class="log-entry">
                         <div class="log-timestamp">Just now</div>
@@ -748,14 +901,50 @@
         </div>
     </div>
 
+    <!-- Notification Toast -->
+    <div id="notification" class="notification">
+        <div class="notification-title" id="notifTitle">Notification</div>
+        <div class="notification-message" id="notifMessage">Message</div>
+    </div>
+
+    <!-- Config Loading -->
+    <script src="config.js"></script>
+
     <script>
         const API_URL = 'https://raw.githubusercontent.com/Rayr-06/rayr-options/main/data/analytics.json';
+        const GITHUB_OWNER = 'Rayr-06';
+        const GITHUB_REPO = 'rayr-options';
         
         let currentTab = 'overview';
         let logEntries = [];
+        let botRunning = false;
+        
+        // GitHub API Configuration (loaded from config.js)
+        let GITHUB_TOKEN = window.GITHUB_CONFIG?.token || '';
+        
+        // Mobile tooltip handling
+        function toggleTooltip(event) {
+            event.stopPropagation();
+            const tooltip = event.target.parentElement;
+            const tooltiptext = tooltip.querySelector('.tooltiptext');
+            tooltiptext.classList.toggle('show-mobile');
+            
+            // Close other tooltips
+            document.querySelectorAll('.tooltiptext').forEach(tt => {
+                if (tt !== tooltiptext) {
+                    tt.classList.remove('show-mobile');
+                }
+            });
+        }
+        
+        // Close tooltips when clicking outside
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.tooltiptext').forEach(tt => {
+                tt.classList.remove('show-mobile');
+            });
+        });
         
         function switchTab(tabName) {
-            // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -763,10 +952,32 @@
                 tab.classList.remove('active');
             });
             
-            // Show selected tab
             document.getElementById('tab-' + tabName).classList.add('active');
             event.target.classList.add('active');
             currentTab = tabName;
+        }
+        
+        function showNotification(title, message, type = 'success') {
+            const notif = document.getElementById('notification');
+            const notifTitle = document.getElementById('notifTitle');
+            const notifMessage = document.getElementById('notifMessage');
+            
+            notifTitle.textContent = title;
+            notifMessage.textContent = message;
+            
+            notif.className = 'notification show ' + type;
+            
+            setTimeout(() => {
+                notif.classList.remove('show');
+            }, 5000);
+            
+            // Request notification permission and show browser notification
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, {
+                    body: message,
+                    icon: '🏆'
+                });
+            }
         }
         
         function updateHealthScore(score) {
@@ -776,7 +987,6 @@
             
             value.textContent = Math.round(score);
             
-            // Update circle color
             const degrees = (score / 100) * 360;
             let color = '#ef4444';
             if (score >= 70) color = '#10b981';
@@ -784,7 +994,6 @@
             
             circle.style.background = `conic-gradient(${color} ${degrees}deg, rgba(255,255,255,0.2) ${degrees}deg)`;
             
-            // Update status text
             if (score >= 70) status.textContent = '✅ Excellent - All systems go!';
             else if (score >= 40) status.textContent = '⚠️ Fair - Watching closely';
             else status.textContent = '❌ Poor - Not trading';
@@ -824,6 +1033,173 @@
             `).join('');
         }
         
+        function updateBotStatus(status, statusText) {
+            const badge = document.getElementById('botStatus');
+            const text = document.getElementById('botStatusText');
+            
+            badge.className = 'status-badge status-' + status;
+            text.textContent = statusText;
+            
+            let icon = '⏸️';
+            if (status === 'running') icon = '▶️';
+            else if (status === 'analyzing') icon = '🔍';
+            
+            badge.querySelector('span').textContent = icon;
+        }
+        
+        async function triggerWorkflow(action = 'scan') {
+            if (!GITHUB_TOKEN) {
+                showNotification(
+                    '⚠️ Setup Required',
+                    'Please add your GitHub token to config.js to control the bot.',
+                    'warning'
+                );
+                return false;
+            }
+            
+            try {
+                const response = await fetch(
+                    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/actions/workflows/trading.yml/dispatches`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/vnd.github+json'
+                        },
+                        body: JSON.stringify({
+                            ref: 'main',
+                            inputs: {
+                                action: action
+                            }
+                        })
+                    }
+                );
+                
+                if (response.status === 204) {
+                    return true;
+                }
+                
+                throw new Error('Failed to trigger workflow');
+                
+            } catch (error) {
+                console.error('Workflow trigger error:', error);
+                return false;
+            }
+        }
+        
+        async function startBot() {
+            const btn = document.getElementById('btnStart');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            
+            addLog('▶️ START command sent - Activating trading systems...', 'info');
+            updateBotStatus('analyzing', 'STARTING...');
+            
+            const success = await triggerWorkflow('start');
+            
+            if (success) {
+                showNotification(
+                    '✅ Bot Started!',
+                    'Trading bot is now analyzing markets. Check back in 2 minutes for results.',
+                    'success'
+                );
+                addLog('✅ Bot activated successfully! Running market analysis...', 'info');
+                updateBotStatus('running', 'ACTIVE');
+                botRunning = true;
+            } else {
+                showNotification(
+                    '❌ Start Failed',
+                    'Could not start bot. Check your GitHub token in config.js',
+                    'error'
+                );
+                addLog('❌ Failed to start bot. Check console for errors.', 'error');
+                updateBotStatus('stopped', 'STOPPED');
+            }
+            
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+        
+        async function stopBot() {
+            const btn = document.getElementById('btnStop');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            
+            addLog('⏹️ STOP command sent - Pausing all trading...', 'warning');
+            
+            showNotification(
+                '⏹️ Bot Stopped',
+                'Trading bot has been paused. No new trades will be executed.',
+                'warning'
+            );
+            addLog('⏹️ Bot paused. No new trades will be executed.', 'warning');
+            updateBotStatus('stopped', 'PAUSED');
+            botRunning = false;
+            
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+        
+        async function scanMarkets() {
+            const btn = document.getElementById('btnScan');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            
+            addLog('🔍 Manual scan initiated - Analyzing current market conditions...', 'info');
+            updateBotStatus('analyzing', 'SCANNING...');
+            
+            const success = await triggerWorkflow('scan');
+            
+            if (success) {
+                showNotification(
+                    '🔍 Scan Started',
+                    'Market analysis in progress. Results will appear in 1-2 minutes.',
+                    'success'
+                );
+                addLog('🔍 Market scan running on GitHub Actions...', 'info');
+                
+                // Refresh data after 2 minutes
+                setTimeout(() => {
+                    loadData();
+                    showNotification(
+                        '✅ Scan Complete',
+                        'Market analysis finished. Dashboard updated.',
+                        'success'
+                    );
+                }, 120000);
+            } else {
+                showNotification(
+                    '❌ Scan Failed',
+                    'Could not trigger market scan. Check your GitHub token.',
+                    'error'
+                );
+                addLog('❌ Failed to trigger scan. Check console for errors.', 'error');
+            }
+            
+            btn.classList.remove('loading');
+            btn.disabled = false;
+            updateBotStatus('stopped', 'READY');
+        }
+        
+        function refreshData() {
+            const btn = document.getElementById('btnRefresh');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            
+            addLog('🔄 Refreshing all data...', 'info');
+            
+            loadData().then(() => {
+                showNotification(
+                    '✅ Refreshed',
+                    'Dashboard data updated successfully.',
+                    'success'
+                );
+                btn.classList.remove('loading');
+                btn.disabled = false;
+            });
+        }
+        
         async function loadData() {
             try {
                 const response = await fetch(API_URL + '?t=' + Date.now());
@@ -840,7 +1216,6 @@
                 updateBar('vol', vol);
                 updateBar('confidence', conf);
                 
-                // Update health score
                 updateHealthScore(conf);
                 
                 // Update metrics
@@ -851,30 +1226,19 @@
                     document.getElementById('winLoss').textContent = `${tm.wins || 0}W / ${tm.losses || 0}L`;
                     document.getElementById('profitFactor').textContent = (tm.profit_factor || 0).toFixed(2);
                     
-                    // Portfolio value
                     const portfolioValue = 100000 + (tm.total_profit || 0);
                     document.getElementById('portfolioValue').textContent = '$' + portfolioValue.toLocaleString();
                     
-                    // Total return
                     const returnPct = ((tm.total_profit || 0) / 100000 * 100).toFixed(2);
                     const returnEl = document.getElementById('totalReturn');
                     returnEl.textContent = (returnPct >= 0 ? '+' : '') + returnPct + '%';
                     returnEl.className = 'metric-value ' + (returnPct >= 0 ? 'value-positive' : 'value-negative');
                     document.getElementById('totalReturnDollar').textContent = '$' + (tm.total_profit || 0).toFixed(2);
                     
-                    // Strategy metrics
-                    document.getElementById('premium-trades').textContent = tm.total_trades || 0;
-                    document.getElementById('premium-winrate').textContent = (tm.win_rate || 0).toFixed(1) + '%';
-                    const pnlEl = document.getElementById('premium-pnl');
-                    pnlEl.textContent = '$' + (tm.total_profit || 0).toFixed(2);
-                    pnlEl.className = tm.total_profit >= 0 ? 'value-positive' : 'value-negative';
-                    
-                    // Performance metrics
                     document.getElementById('expectancy').textContent = '$' + (tm.expectancy || 0).toFixed(2);
                     document.getElementById('avgWinner').textContent = '$' + (tm.avg_winner || 0).toFixed(2);
                     document.getElementById('avgLoser').textContent = '$' + (tm.avg_loser || 0).toFixed(2);
                     
-                    // Risk metrics
                     document.getElementById('currentDrawdown').textContent = (tm.current_drawdown || 0).toFixed(2) + '%';
                     document.getElementById('maxDrawdown').textContent = (tm.max_drawdown || 0).toFixed(2) + '%';
                     document.getElementById('sharpeRatio').textContent = (tm.sharpe_ratio || 0).toFixed(2);
@@ -906,29 +1270,18 @@
                 
                 document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
                 
+                if (!botRunning) {
+                    updateBotStatus('stopped', 'READY');
+                }
+                
             } catch (error) {
                 addLog('⚠️ Failed to load data: ' + error.message, 'error');
             }
         }
         
-        function startBot() {
-            addLog('▶️ START command sent - Activating trading systems', 'info');
-            // Will connect to API when ready
-        }
-        
-        function stopBot() {
-            addLog('⏹️ STOP command sent - Pausing all trading', 'warning');
-            // Will connect to API when ready
-        }
-        
-        function scanMarkets() {
-            addLog('🔍 Manual scan initiated - Analyzing current market conditions...', 'info');
-            loadData();
-        }
-        
-        function refreshData() {
-            addLog('🔄 Refreshing all data...', 'info');
-            loadData();
+        // Request notification permission on load
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
         }
         
         // Initial load
@@ -936,6 +1289,17 @@
         
         // Auto-refresh every 30 seconds
         setInterval(loadData, 30000);
+        
+        // Check for config.js
+        if (!GITHUB_TOKEN) {
+            setTimeout(() => {
+                showNotification(
+                    '⚙️ Setup Required',
+                    'Create config.js with your GitHub token to enable bot controls. See README for instructions.',
+                    'warning'
+                );
+            }, 2000);
+        }
     </script>
 </body>
 </html>
