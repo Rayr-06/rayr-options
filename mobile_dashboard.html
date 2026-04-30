@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -322,7 +322,6 @@
         }
 
         function getCareLevel(data) {
-            // Should the user actually care right now?
             const conf = data.composite_score || 0;
             const hasNewTrade = data.new_trade_today || false;
             const killSwitch = data.kill_switch?.active || false;
@@ -345,13 +344,11 @@
                 const response = await fetch(API_URL + '?t=' + Date.now());
                 const data = await response.json();
                 
-                // Confidence
                 const conf = data.composite_score || 0;
                 document.getElementById('confidenceBar').style.width = conf + '%';
                 document.getElementById('confidenceBar').textContent = Math.round(conf) + '%';
                 document.getElementById('confidenceText').textContent = getConfidenceText(conf);
 
-                // Bot Status
                 if (data.kill_switch?.active) {
                     document.getElementById('botStatus').textContent = '🛑 PAUSED';
                     document.getElementById('botStatusText').textContent = 'Safety limits triggered';
@@ -363,18 +360,15 @@
                     document.getElementById('botStatusText').textContent = 'Analyzing the market';
                 }
 
-                // Should I care?
                 const care = getCareLevel(data);
                 document.getElementById('careLevel').textContent = care.emoji;
                 document.getElementById('careText').textContent = care.text;
 
-                // Market mood
                 const vix = data.vix_level || 15;
                 const mood = getMoodEmoji(vix);
                 document.getElementById('marketMood').textContent = mood.emoji;
                 document.getElementById('moodText').textContent = mood.text + ' (VIX: ' + vix.toFixed(1) + ')';
 
-                // Signals
                 const trend = data.trend_score || 50;
                 const mr = data.mean_reversion_score || 50;
                 const vol = data.volatility_score || 50;
@@ -383,7 +377,6 @@
                 document.getElementById('mrSimple').textContent = getMRText(mr);
                 document.getElementById('volSimple').textContent = getVolText(vol);
 
-                // Last update
                 document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
 
             } catch (error) {
@@ -391,10 +384,7 @@
             }
         }
 
-        // Load immediately
         loadData();
-
-        // Auto-refresh every 30 seconds
         setInterval(loadData, 30000);
     </script>
 </body>
