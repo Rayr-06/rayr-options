@@ -2,3 +2,5 @@
 scipy==1.13.0
 alpaca-py==0.25.0
 pytz
+flask
+flask-cors
