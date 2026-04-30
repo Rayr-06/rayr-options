@@ -1,8 +1,29 @@
 {
-  "total_return_pct": 0.0,
   "current_value": 100000.0,
+  "current_cash": 100000.0,
+  "equity": 0.0,
   "initial_capital": 100000,
+  "total_return_pct": 0.0,
+  "total_profit_usd": 0.0,
+  "daily_return_pct": 0,
+  "weekly_return_pct": 0,
+  "monthly_return_pct": 0,
   "total_trades": 1,
+  "winning_trades": 0,
+  "losing_trades": 1,
+  "win_rate": 0.0,
+  "avg_profit_per_trade": 0.0,
+  "recent_trades": [
+    {
+      "timestamp": "2026-04-30T09:05:40.757878",
+      "symbol": "IWM",
+      "strike": 267.38,
+      "premium": 1.66,
+      "return_pct": 0.6223881414692086,
+      "order_id": "908d2a47-331f-4609-acef-5103d2ff3263",
+      "status": "OrderStatus.ACCEPTED"
+    }
+  ],
   "days_running": 0,
-  "last_updated": "2026-04-30T09:05:41.323683"
+  "last_updated": "2026-04-30T09:25:48.237199"
 }

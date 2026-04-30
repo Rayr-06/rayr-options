@@ -1,0 +1,471 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAYR Options - Professional Trading</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            padding: 16px;
+            font-size: 14px;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 { font-size: 24px; }
+        .header .live { 
+            background: #10b981;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .stat-card {
+            background: #1a1f3a;
+            border-radius: 12px;
+            padding: 16px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .stat-card.positive { border-left-color: #10b981; }
+        .stat-card.negative { border-left-color: #ef4444; }
+        .stat-card.warning { border-left-color: #f59e0b; }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .stat-value.large { font-size: 32px; }
+        .stat-value.green { color: #10b981; }
+        .stat-value.red { color: #ef4444; }
+        .stat-value.yellow { color: #f59e0b; }
+        
+        .stat-change {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        
+        .section {
+            background: #1a1f3a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .section-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .badge {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: #374151;
+            color: #9ca3af;
+        }
+        
+        .badge.success { background: #10b981; color: white; }
+        .badge.danger { background: #ef4444; color: white; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #374151;
+            color: #9ca3af;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #374151;
+        }
+        
+        tr:hover { background: #0f1629; }
+        
+        .position-item {
+            background: #0f1629;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .position-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .position-symbol {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .position-pnl {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .position-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+        
+        .spinner {
+            border: 3px solid #374151;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .refresh-btn:hover { background: #5568d3; }
+        
+        .alert {
+            background: #7f1d1d;
+            border-left: 4px solid #ef4444;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .alert-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stat-value { font-size: 24px; }
+            .stat-value.large { font-size: 28px; }
+            
+            table { font-size: 12px; }
+            th, td { padding: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container"></div>
+    
+    <script>
+        const API_BASE = 'https://raw.githubusercontent.com/Rayr-06/rayr-options/main';
+        
+        async function fetchData() {
+            try {
+                const [analyticsRes, positionsRes] = await Promise.all([
+                    fetch(`${API_BASE}/data/analytics.json?t=${Date.now()}`),
+                    fetch(`${API_BASE}/data/positions.json?t=${Date.now()}`)
+                ]);
+                
+                const analytics = await analyticsRes.json();
+                let positions = null;
+                
+                try {
+                    positions = await positionsRes.json();
+                } catch (e) {
+                    positions = { account: analytics, positions: [] };
+                }
+                
+                return { analytics, positions };
+            } catch (error) {
+                console.error('Error:', error);
+                return null;
+            }
+        }
+        
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2
+            }).format(value);
+        }
+        
+        function formatPercent(value) {
+            const sign = value >= 0 ? '+' : '';
+            return sign + value.toFixed(2) + '%';
+        }
+        
+        function formatDate(isoString) {
+            return new Date(isoString).toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        function render(data) {
+            const app = document.getElementById('app');
+            
+            if (!data) {
+                app.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading trading data...</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const { analytics, positions } = data;
+            
+            const totalReturnClass = analytics.total_return_pct >= 0 ? 'positive' : 'negative';
+            const totalReturnColor = analytics.total_return_pct >= 0 ? 'green' : 'red';
+            
+            const winRateClass = analytics.win_rate >= 60 ? 'positive' : analytics.win_rate >= 40 ? 'warning' : 'negative';
+            
+            // Check for alerts
+            const alerts = [];
+            if (analytics.total_return_pct < -5) {
+                alerts.push({
+                    title: 'Portfolio Alert',
+                    message: `Portfolio down ${Math.abs(analytics.total_return_pct).toFixed(2)}% - Review positions`
+                });
+            }
+            
+            app.innerHTML = `
+                <div class="header">
+                    <h1>📊 RAYR OPTIONS</h1>
+                    <div class="live">● LIVE</div>
+                </div>
+                
+                ${alerts.length > 0 ? alerts.map(alert => `
+                    <div class="alert">
+                        <div class="alert-title">${alert.title}</div>
+                        <div>${alert.message}</div>
+                    </div>
+                `).join('') : ''}
+                
+                <div class="stats-grid">
+                    <div class="stat-card ${totalReturnClass}">
+                        <div class="stat-label">Portfolio Value</div>
+                        <div class="stat-value large">${formatCurrency(analytics.current_value)}</div>
+                        <div class="stat-change">Initial: ${formatCurrency(analytics.initial_capital)}</div>
+                    </div>
+                    
+                    <div class="stat-card ${totalReturnClass}">
+                        <div class="stat-label">Total Return</div>
+                        <div class="stat-value large ${totalReturnColor}">${formatPercent(analytics.total_return_pct)}</div>
+                        <div class="stat-change">${formatCurrency(analytics.total_profit_usd)}</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">Cash Available</div>
+                        <div class="stat-value">${formatCurrency(analytics.current_cash)}</div>
+                        <div class="stat-change">Equity: ${formatCurrency(analytics.equity)}</div>
+                    </div>
+                    
+                    <div class="stat-card ${winRateClass}">
+                        <div class="stat-label">Win Rate</div>
+                        <div class="stat-value">${analytics.win_rate.toFixed(1)}%</div>
+                        <div class="stat-change">${analytics.winning_trades}W / ${analytics.losing_trades}L</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">Daily Return</div>
+                        <div class="stat-value ${analytics.daily_return_pct >= 0 ? 'green' : 'red'}">${formatPercent(analytics.daily_return_pct)}</div>
+                        <div class="stat-change">Avg per day</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">Weekly Return</div>
+                        <div class="stat-value ${analytics.weekly_return_pct >= 0 ? 'green' : 'red'}">${formatPercent(analytics.weekly_return_pct)}</div>
+                        <div class="stat-change">Avg per week</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">Monthly Return</div>
+                        <div class="stat-value ${analytics.monthly_return_pct >= 0 ? 'green' : 'red'}">${formatPercent(analytics.monthly_return_pct)}</div>
+                        <div class="stat-change">Avg per month</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">Avg Profit/Trade</div>
+                        <div class="stat-value">${formatCurrency(analytics.avg_profit_per_trade)}</div>
+                        <div class="stat-change">${analytics.total_trades} total trades</div>
+                    </div>
+                </div>
+                
+                ${positions.positions && positions.positions.length > 0 ? `
+                    <div class="section">
+                        <div class="section-header">
+                            Open Positions
+                            <span class="badge">${positions.positions.length} Active</span>
+                        </div>
+                        
+                        ${positions.positions.map(pos => {
+                            const pnlColor = pos.unrealized_pl >= 0 ? 'green' : 'red';
+                            const pnlPct = (pos.unrealized_plpc * 100).toFixed(2);
+                            
+                            return `
+                                <div class="position-item">
+                                    <div class="position-header">
+                                        <div class="position-symbol">${pos.symbol}</div>
+                                        <div class="position-pnl" style="color: ${pnlColor === 'green' ? '#10b981' : '#ef4444'}">
+                                            ${formatCurrency(pos.unrealized_pl)} (${pnlPct >= 0 ? '+' : ''}${pnlPct}%)
+                                        </div>
+                                    </div>
+                                    <div class="position-details">
+                                        <div>
+                                            <div style="color: #9ca3af; font-size: 10px;">SHARES</div>
+                                            <div style="font-weight: bold;">${pos.qty}</div>
+                                        </div>
+                                        <div>
+                                            <div style="color: #9ca3af; font-size: 10px;">AVG PRICE</div>
+                                            <div style="font-weight: bold;">${formatCurrency(pos.avg_price)}</div>
+                                        </div>
+                                        <div>
+                                            <div style="color: #9ca3af; font-size: 10px;">CURRENT</div>
+                                            <div style="font-weight: bold;">${formatCurrency(pos.current_price)}</div>
+                                        </div>
+                                        <div>
+                                            <div style="color: #9ca3af; font-size: 10px;">VALUE</div>
+                                            <div style="font-weight: bold;">${formatCurrency(pos.market_value)}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                ` : ''}
+                
+                <div class="section">
+                    <div class="section-header">
+                        Recent Trades
+                        <span class="badge">${analytics.recent_trades.length} Shown</span>
+                    </div>
+                    
+                    ${analytics.recent_trades.length === 0 ? 
+                        '<p style="text-align: center; color: #9ca3af; padding: 40px;">No trades yet</p>' :
+                        `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Symbol</th>
+                                    <th>Strike</th>
+                                    <th>Premium</th>
+                                    <th>Return</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${analytics.recent_trades.map(trade => `
+                                    <tr>
+                                        <td>${formatDate(trade.timestamp)}</td>
+                                        <td style="font-weight: bold;">${trade.symbol}</td>
+                                        <td>$${trade.strike.toFixed(2)}</td>
+                                        <td>$${trade.premium.toFixed(2)}</td>
+                                        <td style="color: ${trade.return_pct >= 0.5 ? '#10b981' : '#f59e0b'}">
+                                            ${formatPercent(trade.return_pct)}
+                                        </td>
+                                        <td>
+                                            <span class="badge ${trade.status === 'filled' ? 'success' : ''}">${trade.status}</span>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                        `
+                    }
+                </div>
+                
+                <div style="text-align: center; margin-top: 24px;">
+                    <button class="refresh-btn" onclick="location.reload()">
+                        🔄 Refresh Data
+                    </button>
+                </div>
+                
+                <div style="text-align: center; color: #6b7280; font-size: 12px; margin-top: 24px; padding: 16px;">
+                    Last updated: ${formatDate(analytics.last_updated)}<br>
+                    Running for ${analytics.days_running} days | Automated via GitHub Actions
+                </div>
+            `;
+        }
+        
+        // Initial load
+        fetchData().then(render);
+        
+        // Auto-refresh every 60 seconds
+        setInterval(() => {
+            fetchData().then(render);
+        }, 60000);
+    </script>
+</body>
+</html>
