@@ -2,19 +2,19 @@
   "account": {
     "cash": -5465.75,
     "buying_power": 0.0,
-    "portfolio_value": 58.25,
-    "equity": 58.25
+    "portfolio_value": 56.85,
+    "equity": 56.85
   },
   "positions": [
     {
       "symbol": "IWM",
       "qty": 20.0,
       "avg_price": 273.2875,
-      "current_price": 276.2,
-      "market_value": 5524.0,
-      "unrealized_pl": 58.25,
-      "unrealized_plpc": 0.01066
+      "current_price": 276.13,
+      "market_value": 5522.6,
+      "unrealized_pl": 56.85,
+      "unrealized_plpc": 0.0104
     }
   ],
-  "timestamp": "2026-04-30T21:47:46.404559"
+  "timestamp": "2026-04-30T22:03:20.387553"
 }
