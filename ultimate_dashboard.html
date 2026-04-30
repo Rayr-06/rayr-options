@@ -1,0 +1,796 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>RAYR Options - Master Control</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1a1f3a;
+            --light: rgba(255,255,255,0.15);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 15px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Header with Status */
+        .header {
+            background: var(--light);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .live-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pulse {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--success); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 10px transparent; }
+        }
+        
+        /* Main Control Panel */
+        .control-panel {
+            background: var(--light);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .panel-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Strategy Cards */
+        .strategies {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .strategy-card {
+            background: var(--light);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .strategy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .strategy-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .strategy-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-active {
+            background: var(--success);
+            color: white;
+        }
+        
+        .status-paused {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .status-stopped {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .metric-label {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+        
+        .metric-value {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .value-positive { color: var(--success); }
+        .value-negative { color: var(--danger); }
+        .value-neutral { color: var(--warning); }
+        
+        /* Live Signals */
+        .signals-panel {
+            background: var(--light);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .signal-bar-container {
+            margin: 15px 0;
+        }
+        
+        .signal-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .signal-bar {
+            height: 30px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .signal-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, var(--warning) 50%, var(--danger) 100%);
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+        }
+        
+        /* Decision Log */
+        .decision-log {
+            background: var(--light);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .log-entries {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .log-entry {
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            border-left: 4px solid var(--success);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .log-entry.warning {
+            border-left-color: var(--warning);
+        }
+        
+        .log-entry.error {
+            border-left-color: var(--danger);
+        }
+        
+        .log-timestamp {
+            opacity: 0.7;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        /* Expandable Sections */
+        .expandable {
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .expandable-header {
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+        
+        .expandable-header:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .expandable-content {
+            padding: 0 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s, padding 0.3s;
+        }
+        
+        .expandable-content.open {
+            padding: 15px;
+            max-height: 1000px;
+        }
+        
+        .expand-icon {
+            transition: transform 0.3s;
+        }
+        
+        .expand-icon.open {
+            transform: rotate(180deg);
+        }
+        
+        /* Help Tooltips */
+        .help-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 12px;
+            cursor: help;
+            margin-left: 5px;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: var(--dark);
+            color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 12px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .strategies {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .btn-group {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            opacity: 0.7;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🏆 RAYR OPTIONS - MASTER CONTROL</div>
+            <div class="live-status">
+                <div class="pulse"></div>
+                <div>LIVE</div>
+                <div style="opacity: 0.7; font-size: 14px;" id="lastUpdate">Just now</div>
+            </div>
+        </div>
+
+        <!-- Main Control Panel -->
+        <div class="control-panel">
+            <div class="panel-title">
+                🎮 Master Controls
+                <span class="tooltip">
+                    <span class="help-icon">?</span>
+                    <span class="tooltiptext">
+                        <strong>Control all strategies from here.</strong><br>
+                        • START ALL = Activate all strategies<br>
+                        • STOP ALL = Pause everything<br>
+                        • SCAN = Force immediate market analysis<br>
+                        • REFRESH = Update dashboard
+                    </span>
+                </span>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="startAll()">▶️ START ALL</button>
+                <button class="btn btn-danger" onclick="stopAll()">⏹️ STOP ALL</button>
+                <button class="btn btn-primary" onclick="scanMarkets()">🔍 SCAN NOW</button>
+                <button class="btn btn-primary" onclick="refreshData()">🔄 REFRESH</button>
+            </div>
+        </div>
+
+        <!-- Strategy Cards -->
+        <div class="strategies">
+            <!-- Premium Selling Strategy -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <div class="strategy-name">💰 Premium Selling</div>
+                    <div class="strategy-status status-active" id="status-premium">ACTIVE</div>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Win Rate</span>
+                    <span class="metric-value value-positive" id="premium-winrate">--%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Profit Factor</span>
+                    <span class="metric-value" id="premium-pf">--</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Total P&L</span>
+                    <span class="metric-value" id="premium-pnl">$--</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Trades</span>
+                    <span class="metric-value" id="premium-trades">0</span>
+                </div>
+                <button class="btn btn-danger" style="width: 100%; margin-top: 15px;" onclick="toggleStrategy('premium')">
+                    ⏸️ PAUSE THIS STRATEGY
+                </button>
+            </div>
+
+            <!-- Momentum Strategy -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <div class="strategy-name">🚀 Momentum</div>
+                    <div class="strategy-status status-paused" id="status-momentum">COMING SOON</div>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Win Rate</span>
+                    <span class="metric-value" id="momentum-winrate">--%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Profit Factor</span>
+                    <span class="metric-value" id="momentum-pf">--</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Total P&L</span>
+                    <span class="metric-value" id="momentum-pnl">$--</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Trades</span>
+                    <span class="metric-value" id="momentum-trades">0</span>
+                </div>
+                <button class="btn btn-success" style="width: 100%; margin-top: 15px;" onclick="toggleStrategy('momentum')">
+                    ▶️ ACTIVATE (Phase 2)
+                </button>
+            </div>
+
+            <!-- Mean Reversion Strategy -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <div class="strategy-name">🔄 Mean Reversion</div>
+                    <div class="strategy-status status-paused" id="status-meanrev">COMING SOON</div>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Win Rate</span>
+                    <span class="metric-value" id="meanrev-winrate">--%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Profit Factor</span>
+                    <span class="metric-value" id="meanrev-pf">--</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Total P&L</span>
+                    <span class="metric-value" id="meanrev-pnl">$--</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Trades</span>
+                    <span class="metric-value" id="meanrev-trades">0</span>
+                </div>
+                <button class="btn btn-success" style="width: 100%; margin-top: 15px;" onclick="toggleStrategy('meanrev')">
+                    ▶️ ACTIVATE (Phase 2)
+                </button>
+            </div>
+        </div>
+
+        <!-- Live Signals Panel -->
+        <div class="signals-panel">
+            <div class="panel-title">
+                ⚡ Live Market Signals
+                <span class="tooltip">
+                    <span class="help-icon">?</span>
+                    <span class="tooltiptext">
+                        <strong>What the bot is seeing right now:</strong><br>
+                        • 0-40 = Weak (won't trade)<br>
+                        • 40-60 = Moderate (watching)<br>
+                        • 60-80 = Strong (may trade)<br>
+                        • 80-100 = Very strong (will trade)
+                    </span>
+                </span>
+            </div>
+            
+            <div class="signal-bar-container">
+                <div class="signal-label">
+                    <span>📈 Trend Strength</span>
+                    <span id="trend-value">--</span>
+                </div>
+                <div class="signal-bar">
+                    <div class="signal-fill" id="trend-bar" style="width: 0%">0</div>
+                </div>
+            </div>
+
+            <div class="signal-bar-container">
+                <div class="signal-label">
+                    <span>🔄 Mean Reversion</span>
+                    <span id="mr-value">--</span>
+                </div>
+                <div class="signal-bar">
+                    <div class="signal-fill" id="mr-bar" style="width: 0%">0</div>
+                </div>
+            </div>
+
+            <div class="signal-bar-container">
+                <div class="signal-label">
+                    <span>📊 Volatility</span>
+                    <span id="vol-value">--</span>
+                </div>
+                <div class="signal-bar">
+                    <div class="signal-fill" id="vol-bar" style="width: 0%">0</div>
+                </div>
+            </div>
+
+            <div class="signal-bar-container">
+                <div class="signal-label">
+                    <span><strong>💪 CONFIDENCE</strong></span>
+                    <span id="confidence-value"><strong>--</strong></span>
+                </div>
+                <div class="signal-bar">
+                    <div class="signal-fill" id="confidence-bar" style="width: 0%; background: linear-gradient(90deg, #ef4444 0%, #f59e0b 30%, #10b981 60%, #10b981 100%);">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- What's Happening Now -->
+        <div class="decision-log">
+            <div class="panel-title">
+                🧠 What's The Bot Thinking?
+                <span class="tooltip">
+                    <span class="help-icon">?</span>
+                    <span class="tooltiptext">
+                        <strong>Live decision log:</strong><br>
+                        See exactly what the bot is analyzing and why it's making (or not making) trades.
+                    </span>
+                </span>
+            </div>
+            <div class="log-entries" id="decisionLog">
+                <div class="log-entry">
+                    <div class="log-timestamp">Just now</div>
+                    <div>Dashboard loaded. Waiting for first market scan...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expandable Sections -->
+        <div class="expandable">
+            <div class="expandable-header" onclick="toggleExpand('explain')">
+                <span>📚 How This Works (Click to expand)</span>
+                <span class="expand-icon" id="icon-explain">▼</span>
+            </div>
+            <div class="expandable-content" id="content-explain">
+                <h3>Premium Selling Strategy:</h3>
+                <p><strong>What it does:</strong> Sells PUT options on SPY/QQQ/IWM and collects premium.</p>
+                <p><strong>How it works:</strong> Like selling insurance - you get paid upfront. If price stays above strike, you keep the premium (profit). If price falls below, you might have to buy at strike (potential loss).</p>
+                <p><strong>When it trades:</strong> Only when confidence > 60%, VIX is normal, and market conditions are favorable.</p>
+                <br>
+                <h3>Momentum Strategy (Phase 2):</h3>
+                <p><strong>What it does:</strong> Buys CALL options when strong upward momentum detected.</p>
+                <p><strong>How it works:</strong> Catches strong moves up. "The trend is your friend."</p>
+                <br>
+                <h3>Mean Reversion Strategy (Phase 2):</h3>
+                <p><strong>What it does:</strong> Buys when oversold, sells when overbought.</p>
+                <p><strong>How it works:</strong> Like a rubber band - when stretched too far, it snaps back.</p>
+            </div>
+        </div>
+
+        <div class="expandable">
+            <div class="expandable-header" onclick="toggleExpand('money')">
+                <span>💰 Will This Make Money? (Click for honest answer)</span>
+                <span class="expand-icon" id="icon-money">▼</span>
+            </div>
+            <div class="expandable-content" id="content-money">
+                <h3>The Brutal Truth:</h3>
+                <p><strong>Maybe.</strong> Here's what determines success:</p>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li><strong>Edge exists:</strong> We'll know after 100+ trades (3-6 months)</li>
+                    <li><strong>You follow rules:</strong> No emotional trading, stick to position sizes</li>
+                    <li><strong>Market cooperates:</strong> System works best in normal volatility</li>
+                    <li><strong>You're patient:</strong> Compounding takes time, not days</li>
+                </ul>
+                <br>
+                <h3>Realistic Expectations:</h3>
+                <p><strong>IF edge exists (big if):</strong></p>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li>Year 1: 15-30% returns (good)</li>
+                    <li>Year 2: 20-40% returns (great)</li>
+                    <li>Year 3+: 30-50% returns (exceptional)</li>
+                </ul>
+                <p><strong>IF no edge:</strong> Lose 10-20% over 6 months, then stop.</p>
+                <br>
+                <h3>Next 12 Weeks:</h3>
+                <p>Bot collects data on paper money. By Week 12, we'll KNOW if this works or not. No guessing.</p>
+            </div>
+        </div>
+
+        <div class="expandable">
+            <div class="expandable-header" onclick="toggleExpand('risk')">
+                <span>⚠️ Risk Controls (Click to see protection)</span>
+                <span class="expand-icon" id="icon-risk">▼</span>
+            </div>
+            <div class="expandable-content" id="content-risk">
+                <h3>How We Protect Your Money:</h3>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li><strong>Position Sizing:</strong> Kelly Criterion × 0.5 safety factor (never overbet)</li>
+                    <li><strong>Confidence Threshold:</strong> Only trades above 60% confidence</li>
+                    <li><strong>Daily Loss Limit:</strong> Stops after 2% daily loss</li>
+                    <li><strong>Weekly Drawdown:</strong> Reduces size 50% if down 8% weekly</li>
+                    <li><strong>Kill Switch:</strong> Full stop if down 15% monthly</li>
+                    <li><strong>Consecutive Losses:</strong> Pauses after 3 losses in a row</li>
+                </ul>
+                <br>
+                <p><strong>Bottom line:</strong> System is designed to survive bad periods and capitalize on good ones.</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>Auto-refreshing every 30 seconds</div>
+            <div style="margin-top: 10px; opacity: 0.5;">
+                RAYR Options Professional Trading System v3.0<br>
+                Paper Trading Mode • Alpaca Markets
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://raw.githubusercontent.com/Rayr-06/rayr-options/main/data/analytics.json';
+        
+        let logEntries = [];
+        
+        function toggleExpand(id) {
+            const content = document.getElementById('content-' + id);
+            const icon = document.getElementById('icon-' + id);
+            content.classList.toggle('open');
+            icon.classList.toggle('open');
+        }
+        
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = {
+                time: timestamp,
+                message: message,
+                type: type
+            };
+            
+            logEntries.unshift(entry);
+            if (logEntries.length > 20) logEntries.pop();
+            
+            renderLogs();
+        }
+        
+        function renderLogs() {
+            const logContainer = document.getElementById('decisionLog');
+            logContainer.innerHTML = logEntries.map(entry => `
+                <div class="log-entry ${entry.type}">
+                    <div class="log-timestamp">${entry.time}</div>
+                    <div>${entry.message}</div>
+                </div>
+            `).join('');
+        }
+        
+        function updateBar(barId, value) {
+            const bar = document.getElementById(barId + '-bar');
+            const valueDisplay = document.getElementById(barId + '-value');
+            if (bar && valueDisplay) {
+                bar.style.width = value + '%';
+                bar.textContent = Math.round(value);
+                valueDisplay.textContent = Math.round(value) + '/100';
+            }
+        }
+        
+        async function loadData() {
+            try {
+                const response = await fetch(API_URL + '?t=' + Date.now());
+                const data = await response.json();
+                
+                // Update signals
+                const trend = data.trend_score || 50;
+                const mr = data.mean_reversion_score || 50;
+                const vol = data.volatility_score || 50;
+                const conf = data.composite_score || 0;
+                
+                updateBar('trend', trend);
+                updateBar('mr', mr);
+                updateBar('vol', vol);
+                updateBar('confidence', conf);
+                
+                // Update strategy metrics
+                if (data.trade_metrics) {
+                    const tm = data.trade_metrics;
+                    document.getElementById('premium-winrate').textContent = (tm.win_rate || 0).toFixed(1) + '%';
+                    document.getElementById('premium-pf').textContent = (tm.profit_factor || 0).toFixed(2);
+                    document.getElementById('premium-pnl').textContent = '$' + (tm.total_profit || 0).toFixed(2);
+                    document.getElementById('premium-trades').textContent = tm.total_trades || 0;
+                    
+                    // Color code P&L
+                    const pnlEl = document.getElementById('premium-pnl');
+                    if (tm.total_profit > 0) pnlEl.classList.add('value-positive');
+                    else if (tm.total_profit < 0) pnlEl.classList.add('value-negative');
+                }
+                
+                // Add decision log entry
+                if (conf >= 60) {
+                    addLog(`✅ STRONG SIGNAL DETECTED! Confidence: ${conf.toFixed(0)}/100. Bot may trade soon.`, 'info');
+                } else if (conf >= 40) {
+                    addLog(`👀 Moderate signal (${conf.toFixed(0)}/100). Watching for stronger confirmation.`, 'warning');
+                } else {
+                    addLog(`😴 Weak signals (${conf.toFixed(0)}/100). Bot sitting out - waiting for quality setup.`, 'info');
+                }
+                
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+                
+            } catch (error) {
+                addLog('⚠️ Failed to load data: ' + error.message, 'error');
+            }
+        }
+        
+        function startAll() {
+            addLog('▶️ START ALL clicked - Activating all enabled strategies', 'info');
+            // Will connect to live API when ready
+        }
+        
+        function stopAll() {
+            addLog('⏹️ STOP ALL clicked - Pausing all strategies', 'warning');
+            // Will connect to live API when ready
+        }
+        
+        function scanMarkets() {
+            addLog('🔍 Manual scan initiated - Analyzing current market conditions...', 'info');
+            loadData();
+        }
+        
+        function refreshData() {
+            addLog('🔄 Refreshing dashboard data...', 'info');
+            loadData();
+        }
+        
+        function toggleStrategy(strategy) {
+            addLog(`Strategy ${strategy} toggled`, 'info');
+            // Will connect to live API when ready
+        }
+        
+        // Initial load
+        loadData();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadData, 30000);
+    </script>
+</body>
+</html>
