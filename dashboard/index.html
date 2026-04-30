@@ -1,0 +1,275 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAYR Options - Live Trading</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 16px;
+        }
+        
+        .container { max-width: 600px; margin: 0 auto; }
+        
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 { font-size: 24px; margin-bottom: 8px; color: #667eea; }
+        .header .status { font-size: 14px; color: #666; }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .metric {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .metric-value.positive { color: #10b981; }
+        .metric-value.negative { color: #ef4444; }
+        .metric-value.neutral { color: #667eea; }
+        
+        .metric-label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        
+        .trade-item {
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .trade-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .trade-details {
+            font-size: 13px;
+            color: #64748b;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .refresh-btn {
+            width: 100%;
+            padding: 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .refresh-btn:active { background: #5568d3; }
+        
+        .footer {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+            margin-top: 24px;
+            padding: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    
+    <script>
+        const API_BASE = 'https://raw.githubusercontent.com/Rayr-06/rayr-options/main';
+        
+        async function fetchData() {
+            try {
+                const [analyticsRes, historyRes] = await Promise.all([
+                    fetch(`${API_BASE}/data/analytics.json?t=${Date.now()}`),
+                    fetch(`${API_BASE}/data/results/history.json?t=${Date.now()}`)
+                ]);
+                
+                const analytics = await analyticsRes.json();
+                const history = await historyRes.json();
+                
+                return { analytics, history };
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                return null;
+            }
+        }
+        
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2
+            }).format(value);
+        }
+        
+        function formatPercent(value) {
+            return (value >= 0 ? '+' : '') + value.toFixed(2) + '%';
+        }
+        
+        function formatDate(isoString) {
+            return new Date(isoString).toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        function render(data) {
+            const app = document.getElementById('app');
+            
+            if (!data) {
+                app.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading trading data...</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const { analytics, history } = data;
+            const recentTrades = history.filter(h => h.order).slice(-5).reverse();
+            
+            const returnClass = analytics.total_return_pct >= 0 ? 'positive' : 'negative';
+            
+            app.innerHTML = `
+                <div class="container">
+                    <div class="header">
+                        <h1>📊 RAYR OPTIONS</h1>
+                        <div class="status">Live Trading Dashboard</div>
+                    </div>
+                    
+                    <div class="card">
+                        <h2 style="margin-bottom: 16px;">Performance</h2>
+                        <div class="metric-grid">
+                            <div class="metric">
+                                <div class="metric-value ${returnClass}">
+                                    ${formatPercent(analytics.total_return_pct)}
+                                </div>
+                                <div class="metric-label">Total Return</div>
+                            </div>
+                            
+                            <div class="metric">
+                                <div class="metric-value neutral">
+                                    ${formatCurrency(analytics.current_value)}
+                                </div>
+                                <div class="metric-label">Portfolio Value</div>
+                            </div>
+                            
+                            <div class="metric">
+                                <div class="metric-value neutral">
+                                    ${analytics.total_trades}
+                                </div>
+                                <div class="metric-label">Total Trades</div>
+                            </div>
+                            
+                            <div class="metric">
+                                <div class="metric-value neutral">
+                                    ${analytics.days_running}
+                                </div>
+                                <div class="metric-label">Days Running</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h2 style="margin-bottom: 16px;">Recent Trades</h2>
+                        ${recentTrades.length === 0 ? 
+                            '<p style="text-align: center; color: #64748b; padding: 20px;">No trades yet</p>' :
+                            recentTrades.map(trade => `
+                                <div class="trade-item">
+                                    <div class="trade-header">
+                                        <span>${trade.opportunity.symbol}</span>
+                                        <span>${formatPercent(trade.opportunity.return_pct)} weekly</span>
+                                    </div>
+                                    <div class="trade-details">
+                                        Strike: $${trade.opportunity.strike.toFixed(2)} PUT<br>
+                                        Premium: $${trade.opportunity.premium.toFixed(2)}<br>
+                                        ${formatDate(trade.timestamp)}
+                                    </div>
+                                </div>
+                            `).join('')
+                        }
+                    </div>
+                    
+                    <button class="refresh-btn" onclick="location.reload()">
+                        🔄 Refresh Data
+                    </button>
+                    
+                    <div class="footer">
+                        Last updated: ${formatDate(analytics.last_updated)}<br>
+                        Auto-trading via GitHub Actions
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Initial load
+        fetchData().then(render);
+        
+        // Auto-refresh every 60 seconds
+        setInterval(() => {
+            fetchData().then(render);
+        }, 60000);
+    </script>
+</body>
+</html>
