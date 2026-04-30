@@ -1,0 +1,401 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>RAYR Options - Smart Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+            color: white;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .status-big {
+            font-size: 48px;
+            margin: 15px 0;
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-icon {
+            cursor: pointer;
+            background: rgba(255,255,255,0.3);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .explanation {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+            display: none;
+        }
+        
+        .explanation.show {
+            display: block;
+        }
+        
+        .big-number {
+            font-size: 42px;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .rating {
+            text-align: center;
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        
+        .simple-bar {
+            background: rgba(0,0,0,0.3);
+            height: 40px;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981 0%, #fbbf24 50%, #ef4444 100%);
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .action-box {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        
+        .good { color: #10b981; }
+        .okay { color: #fbbf24; }
+        .bad { color: #ef4444; }
+        
+        .btn {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="font-size: 24px; font-weight: bold;">📱 RAYR Options</div>
+            <div style="opacity: 0.9; margin-top: 5px;">Smart Trading Dashboard</div>
+        </div>
+
+        <!-- BOT STATUS -->
+        <div class="card">
+            <div class="card-title">
+                🤖 Bot Status
+                <div class="info-icon" onclick="toggle('info-status')">?</div>
+            </div>
+            <div class="status-big" id="botStatus">⏸️ WAITING</div>
+            <div class="rating" id="botStatusText">Bot is analyzing the market</div>
+            <div class="explanation" id="info-status">
+                <strong>What this means:</strong><br>
+                • ⏸️ WAITING = Bot is watching but not trading yet<br>
+                • ✅ TRADING = Bot found a good opportunity<br>
+                • 🛑 PAUSED = Bot hit safety limits<br><br>
+                The bot only trades when it's VERY confident (60%+ sure).
+            </div>
+        </div>
+
+        <!-- SHOULD I CARE? -->
+        <div class="card">
+            <div class="card-title">
+                🎯 Should I Care Right Now?
+                <div class="info-icon" onclick="toggle('info-care')">?</div>
+            </div>
+            <div class="big-number" id="careLevel">😴</div>
+            <div class="action-box" id="careText">
+                Nope! Bot is doing its thing. Check back tomorrow.
+            </div>
+            <div class="explanation" id="info-care">
+                <strong>What you need to know:</strong><br>
+                • 😴 = Everything's fine, do nothing<br>
+                • 👀 = Bot might trade soon, check in an hour<br>
+                • 🔥 = Bot just traded! See what happened<br>
+                • ⚠️ = Something needs attention<br><br>
+                This tells you if you actually need to look at details.
+            </div>
+        </div>
+
+        <!-- CONFIDENCE METER -->
+        <div class="card">
+            <div class="card-title">
+                💪 Confidence Level
+                <div class="info-icon" onclick="toggle('info-confidence')">?</div>
+            </div>
+            <div class="simple-bar">
+                <div class="bar-fill" id="confidenceBar" style="width: 0%">0%</div>
+            </div>
+            <div style="text-align: center; margin-top: 10px;" id="confidenceText">
+                Not confident enough to trade
+            </div>
+            <div class="explanation" id="info-confidence">
+                <strong>How confident is the bot?</strong><br>
+                • 0-40% = Very uncertain (won't trade)<br>
+                • 40-60% = Weak signal (won't trade)<br>
+                • 60-80% = Good signal (might trade)<br>
+                • 80-100% = Strong signal (will trade)<br><br>
+                Bot needs 60%+ to actually make a trade. This protects your money from bad bets.
+            </div>
+        </div>
+
+        <!-- MARKET MOOD -->
+        <div class="card">
+            <div class="card-title">
+                🌡️ Market Mood
+                <div class="info-icon" onclick="toggle('info-mood')">?</div>
+            </div>
+            <div class="big-number" id="marketMood">😐</div>
+            <div class="rating" id="moodText">CALM</div>
+            <div class="explanation" id="info-mood">
+                <strong>What's the market doing?</strong><br>
+                • 😴 SLEEPY = Very calm, low volatility<br>
+                • 😐 CALM = Normal market conditions<br>
+                • 😰 NERVOUS = Market is jumpy<br>
+                • 😱 PANIC = High volatility, be careful<br><br>
+                VIX below 15 = calm, 15-20 = normal, 20-30 = nervous, 30+ = panic
+            </div>
+        </div>
+
+        <!-- WHAT'S IT LOOKING AT? -->
+        <div class="card">
+            <div class="card-title">
+                🔍 What's It Analyzing?
+                <div class="info-icon" onclick="toggle('info-analyzing')">?</div>
+            </div>
+            <div id="signalsSimple">
+                <div style="margin: 10px 0;">
+                    <strong>Trend:</strong> <span id="trendSimple">Checking...</span>
+                </div>
+                <div style="margin: 10px 0;">
+                    <strong>Mean Reversion:</strong> <span id="mrSimple">Checking...</span>
+                </div>
+                <div style="margin: 10px 0;">
+                    <strong>Volatility:</strong> <span id="volSimple">Checking...</span>
+                </div>
+            </div>
+            <div class="explanation" id="info-analyzing">
+                <strong>The 3 things bot watches:</strong><br><br>
+                
+                <strong>1. Trend</strong> = Is the market going up or down?<br>
+                Like checking: "Is this thing moving in one direction?"<br><br>
+                
+                <strong>2. Mean Reversion</strong> = Is it too stretched?<br>
+                Like a rubber band - if stretched too far, it snaps back.<br><br>
+                
+                <strong>3. Volatility</strong> = How jumpy is it?<br>
+                Calm = good for selling options. Jumpy = risky.<br><br>
+                
+                Bot combines all 3 to decide if it's safe to trade.
+            </div>
+        </div>
+
+        <!-- TRADES TODAY -->
+        <div class="card">
+            <div class="card-title">
+                📊 Activity Today
+                <div class="info-icon" onclick="toggle('info-activity')">?</div>
+            </div>
+            <div id="activityToday">
+                <div style="text-align: center; padding: 20px;">
+                    No trades yet today
+                </div>
+            </div>
+            <div class="explanation" id="info-activity">
+                <strong>What happened today?</strong><br>
+                Shows you any trades the bot made, when, and why.<br><br>
+                Remember: Bot doesn't trade every day. It waits for quality setups.
+            </div>
+        </div>
+
+        <button class="btn" onclick="window.location.reload()">🔄 Refresh Dashboard</button>
+
+        <div class="footer">
+            Auto-refreshing every 30 seconds<br>
+            Last update: <span id="lastUpdate">Never</span>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://raw.githubusercontent.com/Rayr-06/rayr-options/main/data/analytics.json';
+        
+        function toggle(id) {
+            const el = document.getElementById(id);
+            el.classList.toggle('show');
+        }
+
+        function getConfidenceText(conf) {
+            if (conf < 40) return "Very weak - won't trade";
+            if (conf < 60) return "Weak signal - won't trade";
+            if (conf < 80) return "Good signal - might trade";
+            return "Strong signal - will trade!";
+        }
+
+        function getTrendText(val) {
+            if (val < 40) return "Going down 📉";
+            if (val < 60) return "Sideways ➡️";
+            return "Going up 📈";
+        }
+
+        function getMRText(val) {
+            if (val < 40) return "Not stretched";
+            if (val < 60) return "Normal";
+            return "Stretched (might snap back)";
+        }
+
+        function getVolText(val) {
+            if (val < 40) return "Very calm 😴";
+            if (val < 60) return "Normal activity";
+            return "Jumpy 🎢";
+        }
+
+        function getCareLevel(data) {
+            // Should the user actually care right now?
+            const conf = data.composite_score || 0;
+            const hasNewTrade = data.new_trade_today || false;
+            const killSwitch = data.kill_switch?.active || false;
+
+            if (killSwitch) return { emoji: '⚠️', text: 'ALERT: Bot paused itself. Check what happened.' };
+            if (hasNewTrade) return { emoji: '🔥', text: 'Bot just made a trade! Check the details below.' };
+            if (conf >= 60) return { emoji: '👀', text: 'Bot is seeing a good opportunity. Might trade soon!' };
+            return { emoji: '😴', text: "Nope! Bot is doing its thing. Check back tomorrow." };
+        }
+
+        function getMoodEmoji(vix) {
+            if (vix < 15) return { emoji: '😴', text: 'SLEEPY' };
+            if (vix < 20) return { emoji: '😐', text: 'CALM' };
+            if (vix < 30) return { emoji: '😰', text: 'NERVOUS' };
+            return { emoji: '😱', text: 'PANIC' };
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch(API_URL + '?t=' + Date.now());
+                const data = await response.json();
+                
+                // Confidence
+                const conf = data.composite_score || 0;
+                document.getElementById('confidenceBar').style.width = conf + '%';
+                document.getElementById('confidenceBar').textContent = Math.round(conf) + '%';
+                document.getElementById('confidenceText').textContent = getConfidenceText(conf);
+
+                // Bot Status
+                if (data.kill_switch?.active) {
+                    document.getElementById('botStatus').textContent = '🛑 PAUSED';
+                    document.getElementById('botStatusText').textContent = 'Safety limits triggered';
+                } else if (conf >= 60) {
+                    document.getElementById('botStatus').textContent = '✅ READY';
+                    document.getElementById('botStatusText').textContent = 'Good opportunity found!';
+                } else {
+                    document.getElementById('botStatus').textContent = '⏸️ WAITING';
+                    document.getElementById('botStatusText').textContent = 'Analyzing the market';
+                }
+
+                // Should I care?
+                const care = getCareLevel(data);
+                document.getElementById('careLevel').textContent = care.emoji;
+                document.getElementById('careText').textContent = care.text;
+
+                // Market mood
+                const vix = data.vix_level || 15;
+                const mood = getMoodEmoji(vix);
+                document.getElementById('marketMood').textContent = mood.emoji;
+                document.getElementById('moodText').textContent = mood.text + ' (VIX: ' + vix.toFixed(1) + ')';
+
+                // Signals
+                const trend = data.trend_score || 50;
+                const mr = data.mean_reversion_score || 50;
+                const vol = data.volatility_score || 50;
+                
+                document.getElementById('trendSimple').textContent = getTrendText(trend);
+                document.getElementById('mrSimple').textContent = getMRText(mr);
+                document.getElementById('volSimple').textContent = getVolText(vol);
+
+                // Last update
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // Load immediately
+        loadData();
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadData, 30000);
+    </script>
+</body>
+</html>
