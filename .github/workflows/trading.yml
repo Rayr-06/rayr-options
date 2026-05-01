@@ -1,60 +1,44 @@
-name: Automated Options Trading
+﻿name: Professional Trading System
 
 on:
-  schedule:
-    # Run Monday-Friday at 9:30 AM EST (14:30 UTC)
-    - workflow_dispatch:
+  workflow_dispatch:
     inputs:
       action:
         description: 'Action to perform'
         required: false
         default: 'scan'
-  schedule: '30 14 * * 1-5'
-  workflow_dispatch:
-
-permissions:
-  contents: write
+  schedule:
+    - cron: '0 15 * * 1-5'
 
 jobs:
   trade:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-          cache: 'pip'
-      
-      - name: Install dependencies
-        run: |
-          pip install numpy==1.26.4
-          pip install scipy==1.13.0
-          pip install alpaca-py==0.25.0
-      
-      - name: Run trading bot
-        env:
-          ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
-          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
-        run: python src/master_bot.py
-      
-      - name: Fetch live positions
-        env:
-          ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
-          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
-        run: python src/fetch_positions.py
-      
-      - name: Calculate analytics
-        run: python src/analytics/performance.py
-      
-      - name: Commit results
-        run: |
-          git config user.name "RAYR Trading Bot"
-          git config user.email "bot@rayr.trading"
-          git add data/
-          git diff --staged --quiet || git commit -m "Trade: $(date -u +'%Y-%m-%d %H:%M UTC')"
-          git push
-
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run trading system
+      env:
+        ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
+        ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+        ALPACA_PAPER: true
+      run: |
+        python -m src.main
+    
+    - name: Commit analytics
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add data/analytics.json
+        git diff --quiet && git diff --staged --quiet || git commit -m "Update analytics [skip ci]"
+        git push
